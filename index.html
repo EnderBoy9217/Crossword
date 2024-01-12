@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Crossword</title>
+    
+        <!-- Recommended meta tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    
+        <!-- PyScript CSS -->
+        <link rel="stylesheet" href="https://pyscript.net/releases/2023.12.1/core.css">
+        <link rel="stylesheet" href="./crossword.css" />
+    
+        <!-- This script tag bootstraps PyScript -->
+        <script type="module" src="https://pyscript.net/releases/2023.12.1/core.js"></script>
+    </head>
+    <body>
+        
+        <section class="crossword">
+                <h1>Crossword Creator</h1>
+
+                <script src="./createBoard.js"></script>
+
+                <script type="py" src="./main.py" config="./pyscript.toml" ></script>
+
+        </section>
+        <section class="hintList">
+                <h1>Hints</h1>
+
+        </section>
+        <section class="wordList">
+                <h1>Words</h1>
+
+        </section>
+        <section class="debug">
+            <h2>Debug</h2>
+                <button id="btn-toggle-terminal" py-click="toggle_terminal">Show terminal</button>
+
+                <div id="terminal" style="display: none;">
+                    <script id="console" type="py" terminal></script>
+                </div>
+        </section>
+    </body>
+</html>
