@@ -1,6 +1,11 @@
 var table = document.createElement('table');
 table.id = 'board'; // Assign the id here
 
+var hiddenInput = document.createElement('input');
+hiddenInput.style.position = 'absolute';
+hiddenInput.style.opacity = '0';
+document.body.appendChild(hiddenInput);
+
 function createEditableTable() {
     for(var y=0; y<15; y++){
      var tr = document.createElement('tr');
@@ -17,6 +22,7 @@ function createEditableTable() {
           deSelectAll();
           self.classList.add("selected");
           self.setAttribute('selected', true);
+          hiddenInput.focus();
           window.addEventListener('keydown', function(e) { //
               if (self.getAttribute('selected') == "false") return; //Prevents the cell from accepting a value if it is no longer selected
               
