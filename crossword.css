@@ -1,0 +1,33 @@
+h1 { /* Header */
+    font-family: 'American Typewriter', serif;
+    text-align: center;
+}
+
+#board { /* For text inside board */
+    font-family: 'Didot', serif;
+    position: relative;
+    font-size: 20px;
+    margin: 1% auto;
+    border-collapse: collapse;
+}
+#board td { /* Individual board squares*/
+    border: 3px solid rgb(60, 60, 60);
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+}
+
+#board td div {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.selected {
+    background-color: Bisque;
+}
