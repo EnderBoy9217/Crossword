@@ -17,6 +17,7 @@ h1 { /* Header */
     vertical-align: middle;
     text-align: center;
     cursor: pointer;
+    position: relative;
 }
 
 #board td div {
@@ -30,4 +31,32 @@ h1 { /* Header */
 
 .selected {
     background-color: Bisque;
+}
+
+.blackout {
+    background-color: rgb(60,60,60);
+}
+
+.flex {
+    display: flex;
+    justify-content: space-around;
+}
+
+.innerCellText {
+    font-family: 'Didot', serif;
+    position: relative;
+    font-size: 20px;
+    margin: 1% auto;
+    border-collapse: collapse;
+    user-select: none;
+}
+
+.topLeftText {
+    font-family: 'Didot', serif;
+    color: rgb(60, 60, 60);
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 10px; /* Adjust the size as needed */
+    padding: 2px; /* Adjust the padding as needed */
 }
