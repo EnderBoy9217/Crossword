@@ -1,0 +1,38 @@
+h1 { /* Header */
+    font-family: 'American Typewriter', serif;
+    text-align: center;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensures the header stays above other elements */
+}
+
+.headerBox {
+    background-color: white;
+    width: 120%;
+    height: 130px;
+    border: 2px solid black;
+    position: absolute;
+    top: -20px;
+    left: -10px;
+    z-index: 1;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-around;
+}
+
+img.logo {
+    max-width: 100%;
+    height: auto;
+    min-width: 50px;
+    max-height: 100px;
+    position: absolute;
+    top: 0px;
+    left: -5px;
+    z-index: 2;
+ }
+ 

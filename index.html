@@ -7,77 +7,104 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <!-- CSS -->
-        <link rel="stylesheet" href="./crossword.css" />
+        <link rel="stylesheet" href="./assets/css/crossword.css" />
+        <link rel="stylesheet" href="./assets/css/website.css" />
     </head>
     <body>
-        
+        <header>
+            <div class="headerBox"></div>
+            <img class="logo" id="logoImage" src="./assets/crossword.png" alt="Club logo">
+        </header>
+        <section class="spacer"></section>
         <section class="crossword">
                 <h1>Crossword Creator</h1>
+                <label for="cars">Change Crossword Size:</label>
 
-                <button id="directionButton" type="button">Toggle to vertical direction</button>
+                <select name="cars" id="cars">
+                    <option value="volvo">Daily: 15x15</option>
+                    <option value="saab">Weekly: 21x21</option>
+                    <option value="mercedes">Mini: 5x5</option>
+                    <option value="audi">Audi</option>
+                </select>
+                <div></div>
+                <button id="directionButton" type="button">Type Down</button>
+                <div></div>
                 <button id="saveButton" type="button">Save current crossword as an image</button>
+                <button id="keyButton" type="button">Hide characters</button>
+                <button id="blackoutButton" type="button">Blackout unused squares</button>
+                <div></div>
+
+                <input type="checkbox" id="logoSave" name="logoSave" value="saveLogo">
+                <label for="logoSave"> Save with Logo</label>
+                <input type="checkbox" id="answerKeySave" name="answerKeySave" value="saveKey">
+                <label for="answerKeySave"> Save with Answer Key</label>
+                <table id="crosswordTable"> </table>
+
 
                 <!-- Loads script for saving crossword-->
-                <script src="./html2canvas.js"></script>
-            
-                <script src="./createBoard.js"></script>
+                <script src="./assets/libraries/html2canvas.js"></script>
 
+                <script src="./createBoard.js"></script>
         </section>
         <section class="hints">
                 <h1>Hints</h1>
                 <div class = "flex">
-                    <p>Down</p>
-                    <p>Across</p>
+                    <p id="acrossDescription">Across</p>
+                    <p id="downDescription">Down</p>
                 </div>
                 <div class = "flex">
-                    <ol id="downHintList">
-                    </ol>
-                    <ol id="acrossHintList">
-                    </ol>
+                    <ol id="acrossHintList"> </ol>
+                    <ol id="downHintList"> </ol>
                 </div>
                 <div class = "flex">
                 </div>
                 <div class = "flex">
-                    <input type="text" id="downHint" name="downHint" required minlength="1" maxlength="50" size="10" />
                     <input type="text" id="acrossHint" name="acrossHint" required minlength="1" maxlength="50" size="10" />
+                    <input type="text" id="downHint" name="downHint" required minlength="1" maxlength="50" size="10" />
                 </div>
                 <p></p>
                 <div class = "flex">
-                    <button id="downHintButton" type="button">Create New Down Hint</button>
                     <button id="acrossHintButton" type="button">Create New Across Hint</button>
+                    <button id="downHintButton" type="button">Create New Down Hint</button>
                 </div>
                 <div class = "flex">
-                    <button id="clearDownList" type="button">Clear Down List</button>
                     <button id="clearAcrossList" type="button">Clear Across List</button>
+                    <button id="clearDownList" type="button">Clear Down List</button>
+                </div>
+                <div class = "flex">
+                    <button id="numberAcrossList" type="button">Remove automatic numbering</button>
+                    <button id="numberDownList" type="button">Remove automatic numbering</button>
                 </div>
                 <script src="./hints.js"></script>
         </section>
         <section class="words">
-                <h1>Answer Key</h1>
+                <h1 id = "answerTitle">Answer Key</h1>
                 <div class = "flex">
-                    <p>Down</p>
-                    <p>Across</p>
+                    <p id="acrossAnswerDescription" >Across</p>
+                    <p id="downAnswerDescription" >Down</p>
                 </div>
                 <div class = "flex">
-                    <ol id="downAnswerList">
-                    </ol>
-                    <ol id="acrossAnswerList">
-                    </ol>
+                    <ol id="acrossAnswerList"> </ol>
+                    <ol id="downAnswerList"> </ol>
                 </div>
                 <div class = "flex">
                 </div>
                 <div class = "flex">
-                    <input type="text" id="downAnswer" name="downAnswer" required minlength="1" maxlength="50" size="10" />
                     <input type="text" id="acrossAnswer" name="acrossAnswer" required minlength="1" maxlength="50" size="10" />
+                    <input type="text" id="downAnswer" name="downAnswer" required minlength="1" maxlength="50" size="10" />
                 </div>
                 <p></p>
                 <div class = "flex">
-                    <button id="downAnswerButton" type="button">Create New Down Answer</button>
                     <button id="acrossAnswerButton" type="button">Create New Across Answer</button>
+                    <button id="downAnswerButton" type="button">Create New Down Answer</button>
                 </div>
                 <div class = "flex">
-                    <button id="clearDownAnswerList" type="button">Clear Down List</button>
                     <button id="clearAcrossAnswerList" type="button">Clear Across List</button>
+                    <button id="clearDownAnswerList" type="button">Clear Down List</button>
+                </div>
+                <div class = "flex">
+                    <button id="numberAcrossAnswers" type="button">Remove automatic numbering</button>
+                    <button id="numberDownAnswers" type="button">Remove automatic numbering</button>
                 </div>
                 <script src="./answerKey.js"></script>
         </section>

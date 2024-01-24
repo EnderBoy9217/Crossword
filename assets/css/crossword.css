@@ -1,0 +1,65 @@
+#crosswordTable { /* For text inside board */
+    font-family: 'Didot', serif;
+    position: relative;
+    font-size: 20px;
+    margin: 1% auto;
+    border-collapse: collapse;
+}
+#crosswordTable td { /* Individual board squares*/
+    border: 3px solid rgb(60, 60, 60);
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    text-align: center;
+    cursor: cell;
+    position: relative;
+}
+
+#crosswordTable td div {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    display: block;
+    overflow: hidden;
+    cursor: cell;
+}
+
+.spacer {
+    height: 110px;
+}
+
+.spreadButton {
+    cursor: pointer;
+    display: block-inline;
+}
+
+.selected {
+    background-color: Bisque;
+}
+
+.blackout {
+    background-color: rgb(60,60,60);
+}
+
+.noBullets {
+    list-style-type: none;
+}
+
+.innerCellText {
+    font-family: 'Didot', serif;
+    position: relative;
+    font-size: 20px;
+    margin: 1% auto;
+    border-collapse: collapse;
+    user-select: none;
+}
+
+.topLeftText {
+    font-family: 'Didot', serif;
+    color: rgb(60, 60, 60);
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 10px; /* Adjust the size as needed */
+    padding: 2px; /* Adjust the padding as needed */
+}

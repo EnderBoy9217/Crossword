@@ -2,16 +2,12 @@
     File Scope Variables
 */
 
-var table = document.createElement('table');
-table.id = 'board'; // Assign the id here
+var table = document.getElementById('crosswordTable');
 
 isBlackout = false;
 areHidden = false;
 typingDirection = 0; // 0 = across, 1 = down
-
-/*
-    End of File Scope Variables
-*/
+size = 15;
 
 // Create hidden input for mobile users
 var hiddenInput = document.createElement('input');
@@ -19,10 +15,14 @@ hiddenInput.style.position = 'absolute';
 hiddenInput.style.opacity = '0';
 document.body.appendChild(hiddenInput);
 
+/*
+    End of File Scope Variables
+*/
+
 function createEditableTable() {
-    for(var y=0; y<15; y++){
+    for(var y=0; y<size; y++){
         var tr = document.createElement('tr');
-        for(var x=0; x<15; x++){
+        for(var x=0; x<size; x++){
             var td = document.createElement('td');
             td.setAttribute('row', y);
             td.setAttribute('col', x);
@@ -45,8 +45,10 @@ function createEditableTable() {
     initAllInputs();
 }
 
-function cellOnClick(event) {
+function cellOnClick( event ) {
    shouldFindNext = false;
+   shouldFindPrevious = false;
+   shouldFindSelf = false;
    var self = event.target;
    if ( self.tagName === 'SPAN') {
        self = self.parentNode;
@@ -68,11 +70,17 @@ function cellOnClick(event) {
            self.setAttribute('key', String.fromCharCode(e.which));
            shouldFindNext = true;
        } else if ( isDigit(String.fromCharCode(e.which) ) ) {
-           if ( topLeftText.textContent.length == 0) {
-               topLeftText.textContent = String.fromCharCode(e.which);
-           } else {
+           if ( topLeftText.textContent.length == 1) {
                topLeftText.textContent = topLeftText.textContent + String.fromCharCode(e.which);
+           } else {
+               topLeftText.textContent = String.fromCharCode(e.which);
+               shouldFindSelf = true;
            }
+       } else if (e.which == 8) {
+           centerText.textContent = "";
+           topLeftText.textContent = "";
+           self.setAttribute('key', "");
+           shouldFindPrevious = true;
        } else {
            centerText.textContent = "";
            topLeftText.textContent = "";
@@ -84,29 +92,45 @@ function cellOnClick(event) {
        if (shouldFindNext) {
            findNextCell( self ); // JS doesn't support multithreading, however tables shouldnt be big enough to cause huge memory issues
        }
+       else if (shouldFindPrevious) {
+           findNextCell( self, true );
+       }
+       else if (shouldFindSelf) {
+           findCurrentCell( self );
+       }
    });
 }
 
-function findNextCell( currentCell ) {
+function findCurrentCell( currentCell ) {
+    var selectEvent = new CustomEvent('select');
+    currentCell.dispatchEvent(selectEvent);
+}
+
+function findNextCell( currentCell, backwards = false ) {
     x = parseInt(currentCell.getAttribute('col'));
     y = parseInt(currentCell.getAttribute('row'));
     if (typingDirection == 0) {
-        console.log("Finding horizontal cell");
         var cells = Array.from(document.getElementsByClassName("cell"));
         var currentRowCells = cells.filter(cell => parseInt(cell.getAttribute('row')) == y);
-        var nextCellIndex = currentRowCells.findIndex(cell => cell == currentCell) + 1;
-    
+        if (!backwards) {
+            var nextCellIndex = currentRowCells.findIndex(cell => cell == currentCell) + 1;
+        } else {
+            var nextCellIndex = currentRowCells.findIndex(cell => cell == currentCell) - 1;
+        }
+        
         if (nextCellIndex < currentRowCells.length) {
             var nextCell = currentRowCells[nextCellIndex];
             var selectEvent = new CustomEvent('select');
             nextCell.dispatchEvent(selectEvent);
         }
     } else {
-        console.log("Finding vertical cell");
         var cells = Array.from(document.getElementsByClassName("cell"));
         var currentColCells = cells.filter(cell => parseInt(cell.getAttribute('col')) == x);
-        var nextCellIndex = currentColCells.findIndex(cell => cell == currentCell) + 1;
-    
+        if (!backwards) {
+            var nextCellIndex = currentColCells.findIndex(cell => cell == currentCell) + 1;
+        } else {
+            var nextCellIndex = currentColCells.findIndex(cell => cell == currentCell) - 1;
+        }
         if (nextCellIndex < currentColCells.length) {
             var nextCell = currentColCells[nextCellIndex];
             var selectEvent = new CustomEvent('select');
@@ -117,26 +141,151 @@ function findNextCell( currentCell ) {
 
 function saveTableAsImage() {
     console.log("Saving");
-    let tableElement = document.querySelector('table'); // Select the table element
-    html2canvas(tableElement).then(function(canvas) {
-       // Convert the canvas to a base64 string
-       let dataUrl = canvas.toDataURL();
-       
-       // Create a link element
-       let link = document.createElement('a');
-       
-       // Set the href attribute of the link element to the base64 string
-       link.href = dataUrl;
-       
-       // Set the download attribute of the link element to the desired filename
-       link.download = 'crossword.png';
-       
-       // Create and simulate link click
-       document.body.appendChild(link);
-       link.click();
-       document.body.removeChild(link);
+
+    answerKeyButton = document.getElementById("answerKeySave");
+    logoButton = document.getElementById("logoSave");
+
+    // Create a new parent div
+    let parentDiv = document.createElement('div');
+    parentDiv.id = 'captureParent'; // Give it a unique ID
+    parentDiv.style.width = 'fit-content';
+
+    let flexDescriptionContainer = document.createElement('div');
+    flexDescriptionContainer.style.display = 'flex';
+    flexDescriptionContainer.style.justifyContent = 'flex-start';
+    flexDescriptionContainer.style.gap = '200px';
+
+    let flexListContainer = document.createElement('div');
+    flexListContainer.style.display = 'flex';
+    flexListContainer.style.justifyContent = 'flex-start';
+    flexListContainer.style.gap = '200px';
+
+    let flexTitleContainer = document.createElement('div');
+    /*
+    flexTitleContainer.style.display = 'flex';
+    flexTitleContainer.style.justifyContent = 'flex-start';
+    flexTitleContainer.style.gap = '200px';
+    */
+
+    let flexAnswerDescriptionContainer = document.createElement('div');
+    flexAnswerDescriptionContainer.style.display = 'flex';
+    flexAnswerDescriptionContainer.style.justifyContent = 'flex-start';
+    flexAnswerDescriptionContainer.style.gap = '200px';
+
+    let flexAnswerContainer = document.createElement('div');
+    flexAnswerContainer.style.display = 'flex';
+    flexAnswerContainer.style.justifyContent = 'flex-start';
+    flexAnswerContainer.style.gap = '200px';
+
+    if ( logoButton.checked ) {
+        let img = document.createElement('img');
+
+        // Set the source of the image
+        img.src = './assets/crossword.png'; // replace with your image path
+
+        // Set other attributes if needed
+        img.alt = 'Image Description';
+        img.width = 150; // 3:2 ratio
+        img.height = 100;
+        
+        parentDiv.appendChild(img);
+        console.log("Adding logo");
+    }
+
+    let elementsToCapture = ['#crosswordTable'];
+    elementsToCapture.forEach((selector) => {
+        let element = document.querySelector(selector);
+        if (element) {
+            let clonedElement = element.cloneNode(true);
+            clonedElement.style.marginLeft = '0px';
+            clonedElement.style.marginRight = 'auto';
+            parentDiv.appendChild(clonedElement);
+        }
     });
+
+    let descriptionsToCapture = ['#acrossDescription','#downDescription'];
+    descriptionsToCapture.forEach((selector) => {
+        let element = document.querySelector(selector);
+        if (element) {
+            let clonedElement = element.cloneNode(true);
+            flexDescriptionContainer.appendChild(clonedElement);
+        }
+    });
+
+    let listsToCapture = ['#acrossHintList','#downHintList'];
+    listsToCapture.forEach((selector) => {
+        let element = document.querySelector(selector);
+        if (element) {
+            let clonedElement = element.cloneNode(true);
+            flexListContainer.appendChild(clonedElement);
+        }
+    });
+
+    let answerTitleToCapture = ['#answerTitle'];
+    answerTitleToCapture.forEach((selector) => {
+        let element = document.querySelector(selector);
+        if (element) {
+            let clonedElement = element.cloneNode(true);
+            flexTitleContainer.appendChild(clonedElement);
+        }
+    });
+
+    let answersDescriptionsToCapture = ['#acrossAnswerDescription','#downAnswerDescription'];
+    answersDescriptionsToCapture.forEach((selector) => {
+        let element = document.querySelector(selector);
+        if (element) {
+            let clonedElement = element.cloneNode(true);
+            flexAnswerDescriptionContainer.appendChild(clonedElement);
+        }
+    });
+
+    let answersToCapture = ['#acrossAnswerList','#downAnswerList'];
+    answersToCapture.forEach((selector) => {
+        let element = document.querySelector(selector);
+        if (element) {
+            let clonedElement = element.cloneNode(true);
+            flexAnswerContainer.appendChild(clonedElement);
+        }
+    });
+
+    parentDiv.appendChild(flexDescriptionContainer);
+
+    parentDiv.appendChild(flexListContainer);
+
+    if ( answerKeyButton.checked ) {
+        parentDiv.appendChild(flexTitleContainer);
+        parentDiv.appendChild(flexAnswerDescriptionContainer);
+        parentDiv.appendChild(flexAnswerContainer);
+        console.log("Adding answer key");
+    }
+
+    // Append the parent div to the body
+    document.body.appendChild(parentDiv);
+
+    // Select the parent div
+    let tableElement = document.querySelector('#captureParent'); // Select it using its unique ID
+
+    html2canvas(tableElement).then(function(canvas) {
+        // Convert the canvas to a base64 string
+        let dataUrl = canvas.toDataURL();
+
+        // Create a link element
+        let link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'crossword.png';
+
+        // Create and simulate link click
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Remove the parent div from the body
+        document.body.removeChild(parentDiv);
+        }).catch(function(error) {
+            console.error('An error occurred while capturing the table:', error);
+        });
 }
+
 
 function isAlphabetic(char) {
     if (char.length !== 1) {
@@ -152,7 +301,7 @@ function isDigit(char) {
 }
 
 function deSelectAll() {
-    var cells = document.getElementsByClassName("cell");
+    var cells = document.getElementsByClassName("selected");
     for(var i = 0; i < cells.length; i++) {
        cells[i].setAttribute('selected', false);
        cells[i].classList.remove("selected");
@@ -163,32 +312,27 @@ function deSelectAll() {
     Create buttons 
 */
 
-function createKeyButton() {
-    // Create the button
-   var button = document.createElement('button');
-   button.id = 'keyButton';
-   button.textContent = 'Hide characters';
-   document.body.appendChild(button);
-   button.addEventListener('click', toggleShow);
+function createKeyButtonEvent() {
+    button = document.getElementById('keyButton');
+    button.className = 'spreadButton'; // CSS Styling
+    button.addEventListener('click',toggleShow);
 }
 
-function createBlackoutButton() {
-    var button = document.createElement('button');
-    button.id = 'blackoutButton';
-    button.textContent = 'Blackout unused squares';
-
-    document.body.appendChild(button);
-
+function createBlackoutButtonEvent() {
+    button = document.getElementById('blackoutButton');
+    button.className = 'spreadButton'; // CSS Styling
     button.addEventListener('click',toggleBlackout);
 }
 
 function createDirectionButtonEvent() {
     button = document.getElementById('directionButton');
+    button.className = 'spreadButton'; // CSS Styling
     button.addEventListener('click',toggleDirection);
 }
 
 function createSaveButtonEvent() {
     button = document.getElementById('saveButton');
+    button.className = 'spreadButton'; // CSS Styling
     button.addEventListener('click',saveTableAsImage);
 }
 /*
@@ -196,9 +340,10 @@ function createSaveButtonEvent() {
 */
 
 function initAllInputs() {
-    createKeyButton();
-    createBlackoutButton();
+    createKeyButtonEvent();
+    createBlackoutButtonEvent();
     createDirectionButtonEvent();
+    createSaveButtonEvent();
 }
 
 /*
@@ -234,14 +379,12 @@ function toggleShow() {
 function toggleDirection() {
     if (typingDirection == 0) {
         button = document.getElementById('directionButton');
-        button.textContent = "Toggle to vertical direction";
+        button.textContent = "Type Across";
         typingDirection = 1;
-        console.log("Changed direction to vertical");
     } else {
         button = document.getElementById('directionButton');
-        button.textContent = "Toggle to horizontal direction";
+        button.textContent = "Type Down";
         typingDirection = 0;
-        console.log("Changed direction to horizontal");
     }
 }
 
@@ -288,8 +431,3 @@ function clearTable() {
 }
 
 createEditableTable();
-
-window.onload = function () {
-    createSaveButtonEvent();
-    console.log("Creating event");
-}
