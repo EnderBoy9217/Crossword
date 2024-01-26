@@ -4,25 +4,22 @@
 
 var table = document.getElementById('crosswordTable');
 
-isBlackout = false;
-areHidden = false;
-typingDirection = 0; // 0 = across, 1 = down
-size = 15;
-
-// Create hidden input for mobile users
-var hiddenInput = document.createElement('input');
-hiddenInput.style.position = 'absolute';
-hiddenInput.style.opacity = '0';
-document.body.appendChild(hiddenInput);
+isBlackout = false; // If all unused squares are currently blacked out
+areHidden = false; // If the answers are currently hidden
+typingDirection = 0; // Current typing direction (0 = across, 1 = down)
+highestAcross = 0; // Current highest down number
+highestDown = 0; // Current highest across number
 
 /*
     End of File Scope Variables
 */
 
 function createEditableTable() {
-    for(var y=0; y<size; y++){
+    length = 15;
+    width = 15;
+    for(var y=0; y<length; y++){
         var tr = document.createElement('tr');
-        for(var x=0; x<size; x++){
+        for(var x=0; x<width; x++){
             var td = document.createElement('td');
             td.setAttribute('row', y);
             td.setAttribute('col', x);
@@ -45,60 +42,182 @@ function createEditableTable() {
     initAllInputs();
 }
 
+function createNewTable( event ) {
+    length = 15;
+    width = 15;
+    selector = event.target;
+    switch(selector.value) {
+        case 'standard':
+            length = 15;
+            width = 15;
+            break;
+        case 'magazine':
+            length = 17;
+            width = 17;
+            break;
+        case 'largeMagazine':
+            length = 19;
+            width = 19;
+            break;
+        case 'sunday':
+            length = 21;
+            width = 21;
+            break;
+        case 'mini':
+            length = 5;
+            width = 5;
+            break;
+        case 'weekendSmall':
+            length = 23;
+            width = 23;
+            break;
+        case 'weekendLarge':
+            length = 25;
+            width = 25;
+            break;
+        case 'french':
+            length = 9;
+            width = 9;
+            break;
+        case 'italian':
+            length = 13;
+            width = 21;
+            break;
+    }
+    table.innerHTML = '';
+    for(var y=0; y<length; y++){
+        var tr = document.createElement('tr');
+        for(var x=0; x<width; x++){
+            var td = document.createElement('td');
+            td.setAttribute('row', y);
+            td.setAttribute('col', x);
+            td.setAttribute('class', "cell");
+            td.setAttribute('selected', false);
+            td.setAttribute('key', "");
+            var topLeftText = document.createElement('span');
+            topLeftText.className = 'topLeftText'; // CSS Styling
+            var centerText = document.createElement('span');
+            centerText.className = 'innerCellText'; // CSS Styling
+            td.addEventListener('click',cellOnClick);
+            td.addEventListener('select',cellOnClick);
+            td.appendChild(centerText);
+            td.appendChild(topLeftText);
+            tr.appendChild(td);
+        }
+        table.appendChild(tr);
+    }
+}
+
 function cellOnClick( event ) {
-   shouldFindNext = false;
-   shouldFindPrevious = false;
-   shouldFindSelf = false;
-   var self = event.target;
-   if ( self.tagName === 'SPAN') {
-       self = self.parentNode;
-   }
-   deSelectAll();
-   if (areHidden) {
-       showTableKey();
-   }
-   self.classList.add("selected");
-   self.setAttribute('selected', true);
-   hiddenInput.focus();
-   var centerText = self.querySelector('.innerCellText');
-   var topLeftText = self.querySelector('.topLeftText');
-   window.addEventListener('keydown', function(e) { 
-       if (self.getAttribute('selected') == "false") return; 
-       e.preventDefault();
-       if( isAlphabetic(String.fromCharCode(e.which) ) ) { 
-           centerText.textContent = String.fromCharCode(e.which); 
-           self.setAttribute('key', String.fromCharCode(e.which));
-           shouldFindNext = true;
-       } else if ( isDigit(String.fromCharCode(e.which) ) ) {
-           if ( topLeftText.textContent.length == 1) {
-               topLeftText.textContent = topLeftText.textContent + String.fromCharCode(e.which);
-           } else {
-               topLeftText.textContent = String.fromCharCode(e.which);
-               shouldFindSelf = true;
-           }
-       } else if (e.which == 8) {
-           centerText.textContent = "";
-           topLeftText.textContent = "";
-           self.setAttribute('key', "");
-           shouldFindPrevious = true;
-       } else {
-           centerText.textContent = "";
-           topLeftText.textContent = "";
-           self.setAttribute('key', "");
-       }
-       self.classList.remove("selected");
-       self.setAttribute('selected', false);
-       window.removeEventListener('keydown', arguments.callee);
-       if (shouldFindNext) {
-           findNextCell( self ); // JS doesn't support multithreading, however tables shouldnt be big enough to cause huge memory issues
-       }
-       else if (shouldFindPrevious) {
-           findNextCell( self, true );
-       }
-       else if (shouldFindSelf) {
-           findCurrentCell( self );
-       }
-   });
+    shouldFindNext = false;
+    shouldFindPrevious = false;
+    shouldFindSelf = false;
+    shouldFindParams = 0;
+    var self = event.target;
+    if ( self.tagName === 'SPAN') {
+        self = self.parentNode;
+    }
+    deSelectAll();
+    if (areHidden) {
+        showTableKey();
+    }
+    self.classList.add("selected");
+    self.setAttribute('selected', true);
+    document.getElementById("hiddenInput").focus();
+    var centerText = self.querySelector('.innerCellText');
+    var topLeftText = self.querySelector('.topLeftText');
+    window.addEventListener('keydown', function(e) { 
+        if (self.getAttribute('selected') == "false") return; 
+        e.preventDefault();
+        if ( isAlphabetic(String.fromCharCode(e.which) ) ) {  // Letter
+            centerText.textContent = String.fromCharCode(e.which); 
+            self.setAttribute('key', String.fromCharCode(e.which));
+            if ( findNextCell( self, true, typingDirection, false ) == undefined || ( findNextCell( self, true, typingDirection, false ).getAttribute('key') == '' && topLeftText.textContent.length == 0 ) ) { // Previous cell is empty and no number on this cell
+                    if ( typingDirection == 0 ) {
+                        highestAcross += 1;
+                        topLeftText.textContent = highestAcross;
+                    } else {
+                        highestDown += 1;
+                        topLeftText.textContent = highestDown;
+                    }
+            }
+            shouldFindNext = true;
+        } else if ( isDigit(String.fromCharCode(e.which) ) ) { // Number
+            if ( topLeftText.textContent.length == 1) {
+                topLeftText.textContent = topLeftText.textContent + String.fromCharCode(e.which);
+            } else {
+                topLeftText.textContent = String.fromCharCode(e.which);
+            }
+            if ( typingDirection == 0 ) { // Across
+                if ( parseInt(topLeftText.textContent) > highestAcross ) {
+                    highestAcross = parseInt(topLeftText.textContent);
+                }
+            } else {
+                if ( parseInt(topLeftText.textContent) > highestDown ) {
+                    highestDown = parseInt(topLeftText.textContent);
+                }
+            }
+            shouldFindSelf = true;
+        } else if (e.which == 8) { // Backspace
+            if ( parseInt(topLeftText.textContent) == highestAcross && typingDirection == 0 ) {
+                highestAcross -= 1;
+            } else if ( parseInt(topLeftText.textContent) == highestDown && typingDirection == 1 ) {
+                highestDown -= 1;
+            }
+            centerText.textContent = "";
+            topLeftText.textContent = "";
+            self.setAttribute('key', "");
+            shouldFindPrevious = true;
+        } else if ( e.which == 9 ) { // Tab
+            toggleDirection();
+            shouldFindNext = true;
+        } else if ( e.which == 37 ) { // Left Arrow Key
+            shouldFindParams = 2;
+        } else if ( e.which == 38 ) { // Up Arrow Key
+            shouldFindParams = 3;
+        } else if ( e.which == 39 ) { // Right Arrow Key
+            shouldFindParams = 1;
+        } else if ( e.which == 40 ) { // Down Arrow Key
+            shouldFindParams = 4;
+        } else { // Other unrecognized input
+            if ( parseInt(topLeftText.textContent) == highestAcross && typingDirection == 0 ) {
+                highestAcross -= 1;
+            } else if ( parseInt(topLeftText.textContent) == highestDown && typingDirection == 1 ) {
+                highestDown -= 1;
+            }
+            centerText.textContent = "";
+            topLeftText.textContent = "";
+            self.setAttribute('key', "");
+        }
+        self.classList.remove("selected");
+        self.setAttribute('selected', false);
+        window.removeEventListener('keydown', arguments.callee);
+        if (shouldFindNext) {
+            findNextCell( self ); // JS doesn't support multithreading, however tables shouldnt be big enough to cause huge memory issues
+        }
+        else if (shouldFindPrevious) {
+            if ( findNextCell( self, true, typingDirection, false ) != undefined) { //Prevents console throwing error, does not impact user experience
+                findNextCell( self, true );
+            }
+        }
+        else if (shouldFindSelf) {
+            findCurrentCell( self );
+        }
+        else if (shouldFindParams != 0) { // Arrow Keys
+            if (shouldFindParams == 1) { // Right Arrow Key
+                findNextCell ( self, false, 0); // Across forwards
+            }
+            else if ( shouldFindParams == 2 ) { // Left Arrow Key
+                findNextCell ( self, true, 0); // Across backwards
+            }
+            else if ( shouldFindParams == 3 ) { // Up Arrow Key
+                findNextCell ( self, true, 1); // Down backwards
+            }
+            else if ( shouldFindParams == 4 ) { // Down Arrow Key
+                findNextCell ( self, false, 1); // Down forwards
+            }
+        }
+    });
 }
 
 function findCurrentCell( currentCell ) {
@@ -106,10 +225,13 @@ function findCurrentCell( currentCell ) {
     currentCell.dispatchEvent(selectEvent);
 }
 
-function findNextCell( currentCell, backwards = false ) {
+function findNextCell( currentCell, backwards = false, direction = -1, select = true ) {
     x = parseInt(currentCell.getAttribute('col'));
     y = parseInt(currentCell.getAttribute('row'));
-    if (typingDirection == 0) {
+    if ( direction == -1 ) {
+        direction = typingDirection;
+    }
+    if (direction == 0) { // Across
         var cells = Array.from(document.getElementsByClassName("cell"));
         var currentRowCells = cells.filter(cell => parseInt(cell.getAttribute('row')) == y);
         if (!backwards) {
@@ -120,10 +242,16 @@ function findNextCell( currentCell, backwards = false ) {
         
         if (nextCellIndex < currentRowCells.length) {
             var nextCell = currentRowCells[nextCellIndex];
-            var selectEvent = new CustomEvent('select');
-            nextCell.dispatchEvent(selectEvent);
+            if ( select ) {
+                var selectEvent = new CustomEvent('select');
+                nextCell.dispatchEvent(selectEvent);
+                return undefined;
+            }
+            else {
+                return nextCell;
+            }
         }
-    } else {
+    } else { // Down
         var cells = Array.from(document.getElementsByClassName("cell"));
         var currentColCells = cells.filter(cell => parseInt(cell.getAttribute('col')) == x);
         if (!backwards) {
@@ -133,8 +261,14 @@ function findNextCell( currentCell, backwards = false ) {
         }
         if (nextCellIndex < currentColCells.length) {
             var nextCell = currentColCells[nextCellIndex];
-            var selectEvent = new CustomEvent('select');
-            nextCell.dispatchEvent(selectEvent);
+            if ( select ) {
+                var selectEvent = new CustomEvent('select');
+                nextCell.dispatchEvent(selectEvent);
+                return undefined;
+            }
+            else {
+                return nextCell;
+            }
         }
     }
 }
@@ -335,15 +469,30 @@ function createSaveButtonEvent() {
     button.className = 'spreadButton'; // CSS Styling
     button.addEventListener('click',saveTableAsImage);
 }
+
+function createSizesEvent() {
+    select = document.getElementById('sizes');
+    select.addEventListener('change',createNewTable);
+}
+
+function createHiddenInput() { // Create hidden input for mobile users
+    var hiddenInput = document.createElement('input');
+    hiddenInput.id = "hiddenInput";
+    hiddenInput.style.position = 'absolute';
+    hiddenInput.style.opacity = '0';
+    document.body.appendChild(hiddenInput);
+}
 /*
     Input Functions
 */
 
-function initAllInputs() {
+function initAllInputs() { // Fires after table is created
     createKeyButtonEvent();
     createBlackoutButtonEvent();
     createDirectionButtonEvent();
     createSaveButtonEvent();
+    createSizesEvent();
+    createHiddenInput();
 }
 
 /*

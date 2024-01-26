@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Crossword</title>
+        <title>Lions Crossword Creator</title>
+        <!--
+            TO DO:
+            Rebrand logo to "lions"
+            Find alternative for "which" methods (depreciated)
+
+            Create way to save/load crosswords (possibly through some sort of .txt)
+            Create database of crosswords
+            Create crossword player
+        -->
     
         <!-- Recommended meta tags -->
         <meta charset="UTF-8">
@@ -18,15 +27,23 @@
         <section class="spacer"></section>
         <section class="crossword">
                 <h1>Crossword Creator</h1>
-                <label for="cars">Change Crossword Size:</label>
+                <label for="sizes">Change Crossword Size:</label>
 
-                <select name="cars" id="cars">
-                    <option value="volvo">Daily: 15x15</option>
-                    <option value="saab">Weekly: 21x21</option>
-                    <option value="mercedes">Mini: 5x5</option>
+                <select name="sizes" id="sizes">
+                    <option value="standard">Standard: 15x15</option>
+                    <option value="magazine">Magazine: 17x17</option>
+                    <option value="largeMagazine">Large Magazine: 19x19</option>
+                    <option value="sunday">Sunday: 21x21</option>
+                    <option value="mini">Mini: 5x5</option>
+                    <option value="weekendSmall">Weekend Small: 23x23</option>
+                    <option value="weekendLarge">Weekend Large: 25x25</option>
+                    <option value="french">French: 9x9</option>
+                    <option value="italian">Italian: 13x21</option>
+
                 </select>
                 <div></div>
                 <button id="directionButton" type="button">Type Down</button>
+                <label for="directionButton"> or press Tab to change direction</label>
                 <div></div>
                 <button id="saveButton" type="button">Save current crossword as an image</button>
                 <button id="keyButton" type="button">Hide characters</button>
