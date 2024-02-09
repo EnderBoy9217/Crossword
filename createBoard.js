@@ -4,13 +4,6 @@
 
 /*
     Most recent changelog:
-    Added Download as file capability
-    Added upload capability
-    Using Tab to switch directions no longer moves the selected cell
-    Using space now keeps the table selected
-
-    Known Bugs:
-    Buttons do not properly update with file upload
 */
 var table = document.getElementById('crosswordTable');
 
@@ -169,7 +162,12 @@ function cellOnClick( event ) {
     document.getElementById("hiddenInput").focus();
     var centerText = self.querySelector('.innerCellText');
     var topLeftText = self.querySelector('.topLeftText');
+    var isTyping = false;
     window.addEventListener('keydown', function(e) { 
+        if ( isTyping ) { //Prevent double-input (#2)
+            return;
+        }
+        isTyping = true;
         if (self.getAttribute('selected') == "false") return; 
         e.preventDefault();
         if ( isAlphabetic(String.fromCharCode(e.which) ) ) {  // Letter

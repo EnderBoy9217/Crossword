@@ -146,8 +146,13 @@ function cellOnClick( event ) {
     document.getElementById("hiddenInput").focus();
     var centerText = self.querySelector('.innerCellText');
     var isCorrect = centerText.classList.contains("correct");
+    var isTyping = false;
     window.addEventListener('keydown', function(e) { 
-        if (self.getAttribute('selected') == "false") return; 
+        if ( isTyping ) {
+            return;
+        }
+        isTyping = true;
+        if (self.getAttribute('selected') == "false") return;
         e.preventDefault();
         if ( isAlphabetic(String.fromCharCode(e.which) ) ) {  // Letter
             if ( !isCorrect ) {
