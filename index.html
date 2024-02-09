@@ -4,12 +4,12 @@
         <title>Lions Crossword Creator</title>
         <!--
             TO DO:
-            Rebrand logo to "lions"
-            Find alternative for "which" methods (depreciated)
+            Find alternative for "which" methods (depreciated) [low-priority]
+            Add way to delete last item in the hint list
+            Add way to disable automatic numbering
 
-            Create way to save/load crosswords (possibly through some sort of .txt)
-            Create database of crosswords
-            Create crossword player
+            BUGS:
+            Double-typing numbers/letters
         -->
     
         <!-- Recommended meta tags -->
@@ -22,13 +22,24 @@
     <body>
         <header>
             <div class="headerBox"></div>
-            <img class="logo" id="logoImage" src="./assets/crossword.png" alt="Club logo">
+            <img class="logo" id="logoImage" src="./assets/logo.png" alt="Club logo">
+            <div class = "headerFlex">
+                <p class="headerLink">Create a Crossword</p>
+                <a href="CrosswordPlayer/player.html" class="headerLink">Play a Crossword</a>
+            </div>
         </header>
         <section class="spacer"></section>
         <section class="crossword">
                 <h1>Crossword Creator</h1>
-                <label for="sizes">Change Crossword Size:</label>
+                <p class="hiddenInput" id="hiddenInput"></p>
 
+                <!-- Uploader-->
+                <span>Upload Crossword:</span>
+                <input type="file" id="cswdUpload" />
+                <div></div>
+
+                <!-- Size changer-->
+                <label for="sizes">Change Crossword Size:</label>
                 <select name="sizes" id="sizes">
                     <option value="standard">Standard: 15x15</option>
                     <option value="magazine">Magazine: 17x17</option>
@@ -39,21 +50,35 @@
                     <option value="weekendLarge">Weekend Large: 25x25</option>
                     <option value="french">French: 9x9</option>
                     <option value="italian">Italian: 13x21</option>
-
                 </select>
                 <div></div>
+
+                <!-- Direction Button-->
                 <button id="directionButton" type="button">Type Down</button>
                 <label for="directionButton"> or press Tab to change direction</label>
                 <div></div>
-                <button id="saveButton" type="button">Save current crossword as an image</button>
+                
+                <!-- Edit Buttons-->
                 <button id="keyButton" type="button">Hide characters</button>
                 <button id="blackoutButton" type="button">Blackout unused squares</button>
+
+                <!-- Save buttons-->
+                <button id="saveButton" type="button">Save current crossword as an image</button>
+                <button id="fileButton" type="button">Save current crossword as a file</button>
+
                 <div></div>
 
+                <!-- Save options-->
                 <input type="checkbox" id="logoSave" name="logoSave" value="saveLogo">
                 <label for="logoSave"> Save with Logo</label>
                 <input type="checkbox" id="answerKeySave" name="answerKeySave" value="saveKey">
                 <label for="answerKeySave"> Save with Answer Key</label>
+
+                <!-- Crossword Title-->
+                <h2 contenteditable="true" class="crosswordTitle" id="cswdTitle">Crossword Name Here</h2>
+                <p contenteditable="true" class="flex" id="authorText">Your Name Here</p>
+
+                <!-- Crossword -->
                 <table id="crosswordTable"> </table>
 
 
@@ -75,8 +100,8 @@
                 <div class = "flex">
                 </div>
                 <div class = "flex">
-                    <input type="text" id="acrossHint" name="acrossHint" required minlength="1" maxlength="50" size="10" />
-                    <input type="text" id="downHint" name="downHint" required minlength="1" maxlength="50" size="10" />
+                    <input type="text" id="acrossHint" name="acrossHint" required minlength="1" maxlength="1000" size="10" />
+                    <input type="text" id="downHint" name="downHint" required minlength="1" maxlength="1000" size="10" />
                 </div>
                 <p></p>
                 <div class = "flex">
@@ -84,7 +109,11 @@
                     <button id="downHintButton" type="button">Create New Down Hint</button>
                 </div>
                 <div class = "flex">
+                    <button id="deleteAcrossList" type="button">Delete Last Across Hint</button>
+                <!--</div>
+                <div class = "flex">-->
                     <button id="clearAcrossList" type="button">Clear Across List</button>
+                    <button id="deleteDownList" type="button">Delete Last Down Hint</button>
                     <button id="clearDownList" type="button">Clear Down List</button>
                 </div>
                 <div class = "flex">
@@ -95,14 +124,21 @@
         </section>
         <section class="words">
                 <h1 id = "answerTitle">Answer Key</h1>
-                <div class = "flex">
-                    <p id="acrossAnswerDescription" >Across</p>
-                    <p id="downAnswerDescription" >Down</p>
+                <div class="flex">
+                    <button id="generateAnswersButton" type="button">Generate Answer Key</button>
+                </div>
+                <div class="flex">
+                    <button id="saveAnswersButton" type="button">Save Answer Key as an Image</button>
                 </div>
                 <div class = "flex">
-                    <ol id="acrossAnswerList"> </ol>
-                    <ol id="downAnswerList"> </ol>
+                    <p id="acrossAnswerDescription">Across</p>
+                    <p id="downAnswerDescription">Down</p>
                 </div>
+                <div class = "flex">
+                    <ol id="acrossAnswerList" class="noBullets"> </ol>
+                    <ol id="downAnswerList" class="noBullets"> </ol>
+                </div>
+                <!--
                 <div class = "flex">
                 </div>
                 <div class = "flex">
@@ -122,7 +158,13 @@
                     <button id="numberAcrossAnswers" type="button">Remove automatic numbering</button>
                     <button id="numberDownAnswers" type="button">Remove automatic numbering</button>
                 </div>
+                -->
                 <script src="./answerKey.js"></script>
         </section>
     </body>
+    <footer>
+        <p class="flex">By using this site you agree to the use of cookies to improve your experience</p>
+        <p class="flex">Website Created By: David Yale</p>
+        <a class="flex" href="mailto:david.yale@student.lovett.org">Contact me at david.yale@student.lovett.org</a>
+    </footer>
 </html>

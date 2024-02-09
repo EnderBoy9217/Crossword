@@ -1,99 +1,232 @@
-function initDownAnswers() {
-    downAnswerButton = document.getElementById('downAnswerButton');
-    downAnswerButton.addEventListener('click', createDownAnswer);
-    downAnswerClearButton = document.getElementById('clearDownAnswerList');
-    downAnswerClearButton.addEventListener('click', clearDownList)
-    downNumberButton = document.getElementById('numberDownAnswers');
-    downNumberButton.addEventListener('click', changeDownAnswerNumbering);
+var minLength = 2;
+
+function loadAcrossKey() {
+    console.log("Loading across key");
+    var acrossArray = [];
+    var table = document.getElementById('crosswordTable');
+    var cells = Array.from(document.getElementsByClassName("cell"));
+    cells.forEach(function(cell) {
+        var currentAnswer = "";
+        var topLeftText = cell.querySelector('.topLeftText').textContent;
+        var centerText = cell.querySelector('.innerCellText').textContent;
+        if ( topLeftText != "" ) {
+            var number = parseInt(topLeftText);
+            currentAnswer = centerText.toUpperCase();
+            var endOfWord = false;
+            var validWord = true;
+            var currentCell = cell;
+            while ( !endOfWord ) {
+                var newCell = findNextCell(currentCell, false, 0, false)
+                if ( newCell == undefined ) { // End of board
+                    endOfWord = true;
+                } else if (newCell.classList.contains("blackout") ) { // Next cell is blacked out
+                    endOfWord = true;
+                } else if ( newCell.querySelector('.innerCellText').textContent == "" ) { // Empty Cell
+                    endOfWord = true;
+                } else if ( newCell.classList.contains("used0") ) {
+                    endOfWord = true;
+                    validWord = false;
+                } else {
+                    var newText = newCell.querySelector('.innerCellText').textContent;
+                    newCell.classList.add("used0");
+                    currentAnswer += newText.toLowerCase();
+                    currentCell = newCell;
+                }
+            }
+            if ( currentAnswer.length >= minLength && validWord) { // All words must be greater than 2 characters
+                acrossArray.push({ index: number, answer: currentAnswer } );
+            }
+        }
+    })
+    sortedAcrossArray = sortByIndex(acrossArray);
+    console.log(sortedAcrossArray);
+    return sortedAcrossArray;
 }
 
-function initAcrossAnswers() {
-    acrossAnswerButton = document.getElementById('acrossAnswerButton');
-    acrossAnswerButton.addEventListener('click', createAcrossAnswer);
-    acrossAnswerClearButton = document.getElementById('clearAcrossAnswerList');
-    acrossAnswerClearButton.addEventListener('click', clearAcrossList);
-    acrossNumberButton = document.getElementById('numberAcrossAnswers');
-    acrossNumberButton.addEventListener('click', changeAcrossAnswerNumbering);
+function changeMinLength( length ) {
+    minLength = length;
 }
 
-function createDownAnswer() {
-    downAnswerList = document.getElementById('downAnswerList');
-    downAnswerInput = document.getElementById('downAnswer');
-    var textValue = downAnswerInput.value;
-    var newItem = document.createElement("li");
-    newItem.textContent = textValue;
-    downAnswerList.appendChild(newItem);
-    downAnswerInput.value = '';
+function loadDownKey() {
+    console.log("Loading down key");
+    var downArray = [];
+    var cells = Array.from(document.getElementsByClassName("cell"));
+    cells.forEach(function(cell) {
+        var currentAnswer = "";
+        var topLeftText = cell.querySelector('.topLeftText').textContent;
+        var centerText = cell.querySelector('.innerCellText').textContent;
+        if ( topLeftText != "" ) {
+            var number = parseInt(topLeftText);
+            currentAnswer = centerText.toUpperCase();
+            var endOfWord = false;
+            var validWord = true;
+            var currentCell = cell;
+            while ( !endOfWord ) {
+                var newCell = findNextCell(currentCell, false, 1, false)
+                if ( newCell == undefined ) { // End of board
+                    endOfWord = true;
+                } else if (newCell.classList.contains("blackout") ) { // Next cell is blacked out
+                    endOfWord = true;
+                } else if ( newCell.querySelector('.innerCellText').textContent == "" ) { // Empty Cell
+                    endOfWord = true;
+                } else if ( newCell.classList.contains("used1") ) {
+                    endOfWord = true;
+                    validWord = false;
+                } else {
+                    var newText = newCell.querySelector('.innerCellText').textContent;
+                    newCell.classList.add("used1");
+                    currentAnswer += newText.toLowerCase();
+                    currentCell = newCell;
+                }
+            }
+            if ( currentAnswer.length >= minLength && validWord ) { // All words must be greater than 2 characters
+                downArray.push( { index: number, answer: currentAnswer } );
+            }
+        }
+    })
+    sortedDownArray = sortByIndex(downArray);
+    console.log(sortedDownArray);
+    return sortedDownArray;
 }
 
-function createAcrossAnswer() {
-    acrossAnswerList = document.getElementById('acrossAnswerList');
-    acrossAnswerInput = document.getElementById('acrossAnswer');
-    var textValue = acrossAnswerInput.value;
-    var newItem = document.createElement("li");
-    newItem.textContent = textValue;
-    acrossAnswerList.appendChild(newItem);
-    acrossAnswerInput.value = '';
+function arrayToListItems(array, list) {
+
+    // Clear existing list items
+    while (list.firstChild) {
+        list.removeChild(list.firstChild);
+    }
+
+    // Create new list items for each object in the array
+    array.forEach((item) => {
+        var li = document.createElement('li');
+        li.textContent = `${item.index}: ${item.answer}`;
+        list.appendChild(li);
+    });
 }
 
-function clearDownList() {
-    downAnswerList = document.getElementById('downAnswerList');
-    downAnswerList.innerHTML = '';
-}
-
-function clearAcrossList() {
-    acrossAnswerList = document.getElementById('acrossAnswerList');
-    acrossAnswerList.innerHTML = '';
-}
-
-function changeDownAnswerNumbering() {
-    downHintList = document.getElementById('downAnswerList');
-    downNumberButton = document.getElementById('numberDownAnswers');
-    if (downHintList.classList.contains("noBullets") ) {
-        downHintList.classList.remove("noBullets");
-        downNumberButton.textContent = "Remove automatic numbering";
-    } else {
-        downHintList.classList.add("noBullets");
-        downNumberButton.textContent = "Add numbers automatically";
+function resetUsed0() {
+    var cells = document.getElementsByClassName("used0");
+    while (cells.length >  0) {
+        cells[0].classList.remove("used0");
     }
 }
 
-function changeAcrossAnswerNumbering() {
-    acrossHintList = document.getElementById('acrossAnswerList');
-    acrossNumberButton = document.getElementById('numberAcrossAnswers');
-    if (acrossHintList.classList.contains("noBullets") ) {
-        acrossHintList.classList.remove("noBullets");
-        acrossNumberButton.textContent = "Remove automatic numbering";
-    } else {
-        acrossHintList.classList.add("noBullets");
-        acrossNumberButton.textContent = "Add numbers automatically";
-        
+function resetUsed1() {
+    var cells = document.getElementsByClassName("used1");
+    while (cells.length >  0) {
+        cells[0].classList.remove("used1");
     }
 }
 
-function initAnswerInputBoxes() {
-    acrossAnswerInput = document.getElementById('acrossAnswer');
-    acrossAnswerInput.addEventListener('focus', function() {
-        deSelectAll();
-    });
-    acrossAnswerInput.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            document.getElementById("acrossAnswerButton").click();
-        }
-    });
-    downAnswerInput = document.getElementById('downAnswer');
-    downAnswerInput.addEventListener('focus', function() {
-        deSelectAll();
-    });
-    downAnswerInput.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            document.getElementById("downAnswerButton").click();
-        }
-    });
+function sortByIndex(arr) {
+    return arr.sort((a, b) => a.index - b.index);
 }
 
-initDownAnswers();
-initAcrossAnswers();
-initAnswerInputBoxes();
+function generateAnswers() {
+    var acrossList = document.getElementById("acrossAnswerList");
+    var downList = document.getElementById("downAnswerList")
+    var acrossAnswers = loadAcrossKey();
+    var downAnswers = loadDownKey();
+    resetUsed0();
+    resetUsed1();
+    arrayToListItems( acrossAnswers, acrossList );
+    arrayToListItems( downAnswers, downList );
+}
+
+function initAnswerKeyGeneration() {
+    generateAnswerButton = document.getElementById('generateAnswersButton');
+    generateAnswerButton.addEventListener('click', generateAnswers);
+}
+
+function initAnswerKeySave() {
+    saveAnswerButton = document.getElementById('saveAnswersButton');
+    saveAnswerButton.addEventListener('click', saveKeyAsImage);
+}
+
+function initAnswerKeyButtons() {
+    initAnswerKeyGeneration();
+    initAnswerKeySave();
+}
+
+function saveKeyAsImage() {
+    console.log("Saving");
+
+    // Create a new parent div
+    let parentDiv = document.createElement('div');
+    parentDiv.id = 'captureParent'; // Give it a unique ID
+    parentDiv.style.width = 'fit-content';
+
+    let flexTitleContainer = document.createElement('div');
+
+    let flexAnswerDescriptionContainer = document.createElement('div');
+    flexAnswerDescriptionContainer.style.display = 'flex';
+    flexAnswerDescriptionContainer.style.justifyContent = 'flex-start';
+    flexAnswerDescriptionContainer.style.gap = '200px';
+
+    let flexAnswerContainer = document.createElement('div');
+    flexAnswerContainer.style.display = 'flex';
+    flexAnswerContainer.style.justifyContent = 'flex-start';
+    flexAnswerContainer.style.gap = '200px';
+
+    let answerTitleToCapture = ['#answerTitle'];
+    answerTitleToCapture.forEach((selector) => {
+        let element = document.querySelector(selector);
+        if (element) {
+            let clonedElement = element.cloneNode(true);
+            flexTitleContainer.appendChild(clonedElement);
+        }
+    });
+
+    let answersDescriptionsToCapture = ['#acrossAnswerDescription','#downAnswerDescription'];
+    answersDescriptionsToCapture.forEach((selector) => {
+        let element = document.querySelector(selector);
+        if (element) {
+            let clonedElement = element.cloneNode(true);
+            flexAnswerDescriptionContainer.appendChild(clonedElement);
+        }
+    });
+
+    let answersToCapture = ['#acrossAnswerList','#downAnswerList'];
+    answersToCapture.forEach((selector) => {
+        let element = document.querySelector(selector);
+        if (element) {
+            let clonedElement = element.cloneNode(true);
+            flexAnswerContainer.appendChild(clonedElement);
+        }
+    });
+
+
+    parentDiv.appendChild(flexTitleContainer);
+    parentDiv.appendChild(flexAnswerDescriptionContainer);
+    parentDiv.appendChild(flexAnswerContainer);
+
+    // Append the parent div to the body
+    document.body.appendChild(parentDiv);
+
+    // Select the parent div
+    let tableElement = document.querySelector('#captureParent'); // Select it using its unique ID
+
+    html2canvas(tableElement).then(function(canvas) {
+        // Convert the canvas to a base64 string
+        let dataUrl = canvas.toDataURL();
+
+        // Create a link element
+        let link = document.createElement('a');
+        link.href = dataUrl;
+        var titleElement = document.getElementById('cswdTitle');
+        var fileName = titleElement.innerHTML + " Key";
+        link.download = fileName + '.png';
+
+        // Create and simulate link click
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Remove the parent div from the body
+        document.body.removeChild(parentDiv);
+        }).catch(function(error) {
+            console.error('An error occurred while capturing the answer key:', error);
+        });
+}
+
+initAnswerKeyButtons();

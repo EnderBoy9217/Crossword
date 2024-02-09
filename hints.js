@@ -5,6 +5,8 @@ function initDownHints() {
     downHintClearButton.addEventListener('click', clearDownList);
     downNumberButton = document.getElementById('numberDownList');
     downNumberButton.addEventListener('click', changeDownNumbering);
+    downDeleteButton = document.getElementById('deleteDownList');
+    downDeleteButton.addEventListener('click',removeLastDownItem);
 }
 
 function initAcrossHints() {
@@ -14,6 +16,8 @@ function initAcrossHints() {
     acrossHintClearButton.addEventListener('click', clearAcrossList);
     acrossNumberButton = document.getElementById('numberAcrossList');
     acrossNumberButton.addEventListener('click', changeAcrossNumbering);
+    acrossDeleteButton = document.getElementById('deleteAcrossList');
+    acrossDeleteButton.addEventListener('click',removeLastAcrossItem);
 }
 
 function createDownHint() {
@@ -68,6 +72,22 @@ function changeAcrossNumbering() {
         acrossHintList.classList.add("noBullets");
         acrossNumberButton.textContent = "Add numbers automatically";
         
+    }
+}
+
+function removeLastAcrossItem() {
+    acrossHintList = document.getElementById('acrossHintList');
+    var lastListItem = acrossHintList.lastElementChild;
+    if (lastListItem) {
+        acrossHintList.removeChild(lastListItem);
+    }
+}
+
+function removeLastDownItem() {
+    downHintList = document.getElementById('downHintList');
+    var lastListItem = downHintList.lastElementChild;
+    if (lastListItem) {
+        downHintList.removeChild(lastListItem);
     }
 }
 
