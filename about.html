@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Lions Crossword Creator</title>
+        <!--
+            TO DO:
+
+            Bugs:
+            Find alternative for "which" methods (depreciated) [super very extra low-priority]
+            Crossword doesn't deselect when clicking outside of it (leads to unintentional editing of crosssword when using other parts of the site.)
+
+            About Page:
+            Make an about page
+            
+            Creator:
+            Add UI to create custom crossword sizes (currently only available through console functions)
+            Create automatic error checkers
+            Add cookie to autosave current crossword
+            ^ Add UI to clear current crossword (and an extra pop-up confirmation)
+            
+            Player:
+            Add UI to show the current hints for the word
+            (Maybe) add auto-check/reveal answer (disables the crossword counting but keeps name in finished crosswords list)
+            {Waiting on a sufficient number of crosswords} Create crossword-of-the-day (possibly supplied through external server, or could be done locally through date seeded number algorithm)
+
+            Network:
+            Set up server for automatic uploading and sharing of crosswords via external server (Keep local files as failsafe)
+        -->
+    
+        <!-- Recommended meta tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <!-- CSS -->
+        <link rel="stylesheet" href="./assets/css/crossword.css" />
+        <link rel="stylesheet" href="./assets/css/website.css" />
+        <link rel="stylesheet" href = "./assets/css/w3.css" />
+    </head>
+    <body>
+        <!-- Navbar (sit on top) -->
+        <div class="w3-top">
+            <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+                <!-- <a href="#home" class="w3-bar-item w3-button"><b>BR</b> Architects</a> -->
+                <img class="logo w3-bar-item" id="logoImage" src="./assets/logo.png" alt="Club logo">
+                <!-- Float links to the right. Hide them on small screens -->
+                <div class="w3-right w3-hide-small">
+                    <a class="w3-bar-item w3-button bolden">About</a>
+                    <a href="player/player.html" class="w3-bar-item w3-button">Play Crosswords</a>
+                    <a href="index.html" class="w3-bar-item w3-button">Create Crosswords</a>
+                </div>
+            </div>
+        </div>
+        <section class="spacer"></section>
+        <section>
+            <div class="flex">
+                <img class="w3-image" id="logoImage" src="./assets/logo.png" alt="Club logo">
+            </div>
+            <div class = "flex">
+                <p>We are a school club dedicated to creating Crosswords for others to enjoy</p>
+            </div>
+        </section>
+    </body>
+</html>

@@ -677,6 +677,14 @@ function createSizesEvent() {
     select.addEventListener('change',createNewTable);
 }
 
+function createDeSelectListener() {
+    document.addEventListener('click', function(event) {
+        if (!table.contains(event.target)) {
+            deSelectAll();
+        }
+    });
+}
+
 /*
     Input Functions
 */
@@ -689,6 +697,7 @@ function initAllInputs() { // Fires after table is created
     createFileButtonEvent();
     createSizesEvent();
     createUploadEvent();
+    createDeSelectListener();
 }
 
 /*
