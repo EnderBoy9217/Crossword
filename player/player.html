@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Lions Crossword Creator</title>
+        <!--
+            TO DO:
+            Rebrand logo to "lions"
+            Find alternative for "which" methods (depreciated)
+
+            Create way to save/load crosswords (possibly through some sort of .txt)
+            Create database of crosswords
+            Create crossword player
+        -->
+    
+        <!-- Recommended meta tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <!-- CSS -->
+        <link rel="stylesheet" href="../assets/css/crosswordPlayer.css" />
+        <link rel="stylesheet" href="../assets/css/website.css" /> <!-- Github pages doesn't like it being in another folder, remember to update-->
+        <link rel="stylesheet" href = "../assets/css/w3.css" />
+    </head>
+    <body>
+        <!-- Navbar (sit on top) -->
+        <div class="w3-top">
+            <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+                <!-- <a href="#home" class="w3-bar-item w3-button"><b>BR</b> Architects</a> -->
+                <img class="logo w3-bar-item" id="logoImage" src="../assets/logo.png" alt="Club logo">
+                <!-- Float links to the right. Hide them on small screens -->
+                <div class="w3-right w3-hide-small">
+                    <a class="w3-bar-item w3-button">About</a>
+                    <a class="w3-bar-item w3-button bolden">Play Crosswords</a>
+                    <a href="../index.html" class="w3-bar-item w3-button">Create Crosswords</a>
+                </div>
+            </div>
+        </div>
+        <!--
+        <header>
+            <div class="headerBox"></div>
+            <img class="logo" id="logoImage" src="../assets/logo.png" alt="Club logo">
+            <div class = "headerFlex">
+                <a href="../index.html" class="headerLink">Create a Crossword</a> 
+                <p class="headerLink">Play a Crossword</p>
+            </div>
+        </header>
+        -->
+        <section class="spacer"></section>
+        <!-- Hidden Pop-Up -->
+        <section class="modal" id="winModal">
+            <div class="modal-content">
+                <button class="close" id="closeModalButton">&times;</button>
+                <h2 class="flex">You beat the Crossword!</h2>
+                <div class="flex">
+                    <p>Crosswords Completed:</p>
+                    <p>Weekly Streak:</p>
+                </div>
+                <div class="flex">
+                    <p class="largeNumber" id="completedNumber">#</p>
+                    <p class="largeNumber" id="streakNumber">#</p>
+                </div>
+                <div class="flex">
+                    <p></p>
+                    <p>Complete a crossword every week to increase your streak!</p>
+                </div>
+            </div>    
+        </section>
+        <div class="overlay" id="winOverlay"></div>
+        <section class="crossword">
+            <h1>Crossword Player</h1>
+            <p class="hiddenInput" id="hiddenInput"></p>
+
+            <!-- Uploader-->
+            <span>Upload or Choose Crossword:</span>
+            <select id="cswdSelect"></select>
+            <button id="selectCrosswordButton">Load this Crossword</button>
+            <div></div>
+            <input type="file" id="cswdUpload" />
+            <div></div>
+
+            <button id="directionButton" type="button">Type Down</button>
+            <label for="directionButton"> or press Tab to change direction</label>
+            <div></div>
+            
+            <!-- Crossword Title-->
+            <h2 class="crosswordTitle" id="cswdTitle">Crossword Name</h2>
+            <p class="flex" id="authorText">Your Name Here</p>
+            <!-- Check against key -->
+            <button id="checkButton" type="button">Check Answers</button>
+
+            <!-- Crossword -->
+            <table id="crosswordTable"> </table>
+
+            <!-- Loads script-->
+            <script src="../assets/preMadeFiles.js"></script>
+            <script src="./loadCrossword.js"></script>
+            <script src="./crosswordCookies.js"></script>
+        </section>
+        <section class="hints">
+            <h1>Hints</h1>
+            <div class = "flex">
+                <p id="acrossDescription">Across</p>
+                <p id="downDescription">Down</p>
+            </div>
+            <div class = "flex">
+                <ol id="acrossHintList"> </ol>
+                <ol id="downHintList"> </ol>
+            </div>
+        </section>
+        <section class="spacer"></section>
+    </body>
+    <footer>
+        <p class="flex">By using this site you agree to the use of cookies to improve your experience</p>
+        <p class="flex">Website Created By: David Yale</p>
+        <a class="flex" href="mailto:david.yale@student.lovett.org">Contact me at david.yale@student.lovett.org</a>
+    </footer>
+</html>

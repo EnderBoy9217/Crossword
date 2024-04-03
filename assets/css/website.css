@@ -58,3 +58,8 @@ img.logo {
     position: absolute;
     opacity: 0;
 }
+
+.bolden {
+    font-weight: bolder;
+    text-decoration: underline;
+}
