@@ -521,7 +521,7 @@ function initAllInputs() { // Fires after table is created
     createCheckButtonEvent();
     initModalButton();
     initSelectButton();
-    createDeSelectListener();
+    //createDeSelectListener();
 }
 
 /* Button Functions */

@@ -697,7 +697,7 @@ function initAllInputs() { // Fires after table is created
     createFileButtonEvent();
     createSizesEvent();
     createUploadEvent();
-    createDeSelectListener();
+    //createDeSelectListener();
 }
 
 /*
