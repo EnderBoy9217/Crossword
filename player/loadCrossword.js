@@ -338,7 +338,8 @@ function loadSelectionButton() {
 function loadPreFile( file ) {
 
     var parser = new DOMParser();
-    var doc = parser.parseFromString(file.content, 'text/html') ;
+    const sanitizedHTML = DOMPurify.sanitize(file.content);
+    var doc = parser.parseFromString(sanitizedHTML, 'text/html') ;
     var name = file.name;
     var titleElement = document.getElementById('cswdTitle');
     titleElement.innerText = name;
@@ -365,7 +366,7 @@ function loadPreFile( file ) {
 
     // Add author name
     var authorText = document.getElementById("authorText");
-    authorText.innerHTML = "Created By: " + tableElement.getAttribute("author");
+    authorText.textContent = "Created By: " + tableElement.getAttribute("author");
 
     // Re-add Event listeners to cells
     var cells = Array.from(document.getElementsByClassName("cell"));
