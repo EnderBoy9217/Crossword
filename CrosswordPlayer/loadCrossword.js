@@ -365,7 +365,7 @@ function loadPreFile( file ) {
 
     // Add author name
     var authorText = document.getElementById("authorText");
-    authorText.innerHTML = "Created By: " + tableElement.getAttribute("author");
+    authorText.textContent = "Created By: " + tableElement.getAttribute("author");
 
     // Re-add Event listeners to cells
     var cells = Array.from(document.getElementsByClassName("cell"));
@@ -410,7 +410,8 @@ var reader = new FileReader();
 reader.onload = function(e) {
     
     var parser = new DOMParser();
-    var doc = parser.parseFromString(e.target.result, 'text/html');
+    const sanitizedHTML = DOMPurify.sanitize(e.target.result);
+    var doc = parser.parseFromString(sanitizedHTML, 'text/html');
 
     // Select the table element from the parsed object
     var tableElement = doc.querySelector('table');
